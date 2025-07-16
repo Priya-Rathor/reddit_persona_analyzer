@@ -84,33 +84,7 @@ graph TB
 
 </div>
 
-<details>
-<summary><strong>📁 Project Structure</strong></summary>
 
-```
-🎭 REDDIT_PERSONA_PROJECT/
-├── 📦 __pycache__/           # Python cache files
-├── 🔧 qodo/                  # Quality assurance tools
-│   ├── 🌐 api/
-│   ├── ⚙️ config/
-│   └── 📊 data/
-├── 📈 data/                  # Generated output files
-│   ├── 📄 [username]_raw_data.json
-│   ├── 👤 [username]_persona.txt
-│   └── 📊 [username]_stats.txt
-├── 🎭 persona/               # Persona-related modules
-├── 🔴 reddit/                # Reddit API modules
-├── 🛠️ utils/                 # Utility functions
-├── 🔐 .env                   # Environment variables
-├── 📝 .gitignore            # Git ignore rules
-├── 🌐 index.html            # Interactive persona viewer
-├── 🐍 main.py               # Core scraping and analysis
-└── 📋 requirements.txt      # Python dependencies
-```
-
-</details>
-
----
 
 ## ⚡ Quick Start
 
