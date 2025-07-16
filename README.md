@@ -1,5 +1,5 @@
 
-# 🎭 Reddit Persona Generator
+#                                             🎭 Reddit Persona Generator
 
 <div align="center">
 
