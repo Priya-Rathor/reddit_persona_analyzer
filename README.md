@@ -5,15 +5,12 @@
 
 <img src="https://img.shields.io/badge/🚀_Status-Active-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Status">
 <img src="https://img.shields.io/badge/Python-3.7+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-<img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
 <img src="https://img.shields.io/badge/Reddit-API-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit API">
 <img src="https://img.shields.io/badge/OpenAI-GPT--4-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI">
 
 <h3>🔥 Transform Reddit Users into Detailed UX Personas with AI Magic ✨</h3>
 
 <p><em>A comprehensive tool for analyzing Reddit user profiles and generating detailed UX personas with a beautiful web interface</em></p>
-
-<img src="https://via.placeholder.com/800x400/4361ee/ffffff?text=🎭+Reddit+Persona+Generator+Demo" alt="Demo" style="border-radius: 10px; margin: 20px 0;">
 
 <p>
 <a href="#-features"><strong>🌟 Features</strong></a> •
@@ -101,7 +98,7 @@ graph TB
 <img src="https://img.shields.io/badge/STEP_1-Clone_&_Install-4361ee?style=for-the-badge&logo=git&logoColor=white" alt="Step 1">
 
 ```bash
-git clone https://github.com/yourusername/reddit-persona-generator.git
+git clone https://github.com/Priya-Rathor/reddit-persona-generator.git
 cd reddit-persona-generator
 pip install -r requirements.txt
 ```
@@ -307,7 +304,7 @@ profile_urls = [
 
 ```bash
 # 1. Fork the repository
-git fork https://github.com/yourusername/reddit-persona-generator.git
+git fork https://github.com/Priya-Rathor/reddit-persona-generator.git
 
 # 2. Create feature branch
 git checkout -b feature/amazing-feature
