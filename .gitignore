@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.env.local
+*.env
+
+# Environment variables & secrets
+*.secret
+*.key
+openai_key.txt
+
+# Logs and debug
+*.log
+logs/
+debug.log
+
+# Mac & Linux
+.DS_Store
+*.swp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# Test / coverage
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+
+# FastAPI auto-reload artifacts
+*.db
+*.sqlite3
+
+# Ignore Jupyter
+.ipynb_checkpoints
+
+# VSCode Python cache
+.pyre/
+
+# Cache files
+.cache/

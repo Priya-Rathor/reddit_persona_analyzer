@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+praw
+openai
+python-dotenv
+pydantic

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reddit Persona Analyzer</title>
+  <style>
+    :root {
+      --primary: #4361ee;      /* Vibrant blue */
+      --primary-light: #4895ef; /* Lighter blue */
+      --secondary: #3f37c9;    /* Deep blue */
+      --accent: #f72585;       /* Energetic pink */
+      --neutral: #4cc9f0;      /* Soft cyan */
+      --text-dark: #2b2d42;    /* Dark gray-blue */
+      --text-medium: #4a4e69;  /* Medium gray-blue */
+      --text-light: #f8f9fa;   /* Light gray */
+      --bg-light: #f8f9fa;     /* Light background */
+      --card-shadow: 0 4px 20px rgba(67, 97, 238, 0.15);
+      --success: #10b981;
+      --error: #ef4444;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 30px;
+      background: var(--bg-light);
+      color: var(--text-dark);
+    }
+    
+    .input-container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 16px;
+    }
+    
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+    
+    .analyze-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .analyze-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+    }
+    
+    .analyze-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-medium);
+    }
+    
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--primary-light);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--error);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: var(--success);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    h1 {
+      text-align: center;
+      color: var(--secondary);
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 32px;
+    }
+    
+    h2 {
+      color: var(--secondary);
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 28px;
+      text-align: center;
+    }
+    
+    .persona-container {
+      background: white;
+      box-shadow: var(--card-shadow);
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 800px;
+      margin: auto;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 30px;
+    }
+    
+    .persona-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.2);
+    }
+    
+    .persona-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .persona-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      border: 5px solid rgba(67, 97, 238, 0.2);
+      object-fit: cover;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      display: block;
+    }
+    
+    .persona-quote {
+      font-size: 1.1em;
+      font-style: italic;
+      margin: 20px auto 0;
+      text-align: center;
+      line-height: 1.6;
+      padding: 20px;
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: 12px;
+      position: relative;
+      max-width: 600px;
+    }
+    
+    .persona-quote:before,
+    .persona-quote:after {
+      content: '"';
+      font-size: 3em;
+      position: absolute;
+      opacity: 0.1;
+      color: var(--primary);
+    }
+    
+    .persona-quote:before {
+      left: 10px;
+      top: -15px;
+    }
+    
+    .persona-quote:after {
+      right: 10px;
+      bottom: -30px;
+    }
+    
+    .persona-name {
+      margin: 0 0 15px 0;
+      color: var(--secondary);
+      font-size: 32px;
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    .persona-name:after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 2px;
+      transform: translateX(-50%);
+    }
+    
+    .persona-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .info-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: 8px;
+    }
+    
+    .info-label {
+      font-weight: 600;
+      color: var(--primary);
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+      font-size: 16px;
+      color: var(--text-medium);
+      font-weight: 500;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+    }
+    
+    .section:last-child {
+      border-bottom: none;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .section-title:before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      background: var(--accent);
+      margin-right: 12px;
+      border-radius: 4px;
+    }
+    
+    .bar {
+      background: #edf2ff;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0 20px 0;
+      height: 12px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--primary-light));
+      border-radius: 10px;
+      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    
+    ul {
+      padding-left: 5px;
+      margin: 0 auto;
+      max-width: 600px;
+    }
+    
+    ul li {
+      margin-bottom: 12px;
+      line-height: 1.6;
+      position: relative;
+      list-style-type: none;
+      padding-left: 30px;
+      color: var(--text-medium);
+    }
+    
+    ul li:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .traits-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+    
+    .trait {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid rgba(67, 97, 238, 0.2);
+    }
+    
+    .personality-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .personality-pair {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+    }
+    
+    .personality-label {
+      font-size: 14px;
+      color: var(--text-medium);
+      font-weight: 500;
+    }
+    
+    .help-text {
+      font-size: 14px;
+      color: var(--text-medium);
+      margin-top: 5px;
+    }
+    
+    @media (max-width: 600px) {
+      .persona-info {
+        grid-template-columns: 1fr;
+      }
+      
+      .persona-container {
+        padding: 20px;
+      }
+      
+      .persona-name {
+        font-size: 28px;
+      }
+      
+      .input-container {
+        padding: 20px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<h1>Reddit Persona Analyzer</h1>
+
+<div class="input-container">
+  <div class="input-group">
+    <label for="usernameInput">Reddit Username or URL</label>
+    <input type="text" id="usernameInput" placeholder="Enter username (e.g., johndoe) or full URL" />
+    <div class="help-text">Enter a Reddit username or paste a full Reddit profile URL</div>
+  </div>
+  
+  <div class="input-group">
+    <label for="limitInput">Analysis Limit (Optional)</label>
+    <input type="number" id="limitInput" placeholder="75" min="10" max="500" value="75" />
+    <div class="help-text">Number of posts/comments to analyze (default: 75)</div>
+  </div>
+  
+  <button class="analyze-btn" id="analyzeBtn" onclick="analyzeUser()">
+    Analyze Persona
+  </button>
+</div>
+
+<div id="content"></div>
+
+<script>
+  const API_BASE_URL = 'http://localhost:8000'; // Update this to your API URL
+
+  async function analyzeUser() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const limit = parseInt(document.getElementById('limitInput').value) || 75;
+    const button = document.getElementById('analyzeBtn');
+    const content = document.getElementById('content');
+    
+    if (!username) {
+      showError('Please enter a Reddit username or URL');
+      return;
+    }
+    
+    // Show loading state
+    button.disabled = true;
+    button.textContent = 'Analyzing...';
+    content.innerHTML = '<div class="loading">Analyzing Reddit user data...</div>';
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/analyze_user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          limit: limit
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Analysis failed');
+      }
+      
+      if (data.success && data.persona) {
+        showSuccess('Analysis completed successfully!');
+        renderPersona(data.persona);
+      } else {
+        throw new Error(data.message || 'Failed to generate persona');
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      showError(error.message || 'Failed to analyze user. Please try again.');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Analyze Persona';
+    }
+  }
+  
+  function showError(message) {
+    const content = document.getElementById('content');
+    content.innerHTML = `<div class="error">${message}</div>`;
+  }
+  
+  function showSuccess(message) {
+    const content = document.getElementById('content');
+    content.innerHTML = `<div class="success">${message}</div>` + content.innerHTML;
+  }
+
+  function extractValue(text, label) {
+    const regex = new RegExp(label + ":\\s*(.*?)(?=\\n|$)", "i");
+    const match = text.match(regex);
+    return match ? match[1].trim() : '';
+  }
+
+  function renderPersona(text) {
+    const lines = text.split("\n").map(line => line.trim());
+    const data = {
+      name: extractValue(text, "USER PERSONA"),
+      age: extractValue(text, "Age"),
+      occupation: extractValue(text, "Occupation"),
+      status: extractValue(text, "Status"),
+      location: extractValue(text, "Location"),
+      tier: extractValue(text, "Tier"),
+      archetype: extractValue(text, "Archetype"),
+      quote: "",
+      motivations: [],
+      personality: "",
+      habits: [],
+      frustrations: [],
+      goals: [],
+      traits: []
+    };
+
+    let currentSection = "";
+    let inQuoteSection = false;
+
+    for (let line of lines) {
+      if (line.startsWith("MOTIVATIONS")) {
+        currentSection = "motivations";
+        inQuoteSection = false;
+      } else if (line.startsWith("PERSONALITY TRAITS")) {
+        currentSection = "personality";
+        inQuoteSection = false;
+      } else if (line.startsWith("BEHAVIOR & HABITS")) {
+        currentSection = "habits";
+        inQuoteSection = false;
+      } else if (line.startsWith("FRUSTRATIONS")) {
+        currentSection = "frustrations";
+        inQuoteSection = false;
+      } else if (line.startsWith("GOALS & NEEDS")) {
+        currentSection = "goals";
+        inQuoteSection = false;
+      } else if (line.startsWith("QUOTE")) {
+        currentSection = "quote";
+        inQuoteSection = true;
+      } else if (line.startsWith("SUPPORTING EVIDENCE")) {
+        currentSection = "";
+        inQuoteSection = false;
+      } else if (inQuoteSection && line.startsWith('"') && line.endsWith('"')) {
+        data.quote = line.slice(1, -1);
+      } else if (currentSection === "motivations" && line.includes(':') && /\d+/.test(line)) {
+        const match = line.match(/(.*?):\s*(\d+)/);
+        if (match) {
+          data.motivations.push({ 
+            label: match[1].replace(/^-\s*/, '').trim(), 
+            value: parseInt(match[2]) 
+          });
+        }
+      } else if (currentSection === "personality" && line.includes('←→')) {
+        const match = line.match(/(.*?)\s*←→\s*(.*?):\s*(\d+)/);
+        if (match) {
+          data.traits.push(`${match[1]} ←→ ${match[2]}: ${match[3]}`);
+        }
+      } else if (["habits", "frustrations", "goals"].includes(currentSection) && line.startsWith("-")) {
+        data[currentSection].push(line.slice(1).trim());
+      }
+    }
+
+    // Generate a more realistic avatar URL based on username
+    const avatarUrl = `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80`;
+
+    // Build HTML
+    const contentDiv = document.getElementById("content");
+    const existingSuccess = contentDiv.querySelector('.success');
+    
+    contentDiv.innerHTML = `
+    ${existingSuccess ? existingSuccess.outerHTML : ''}
+    <div class="persona-container">
+      <div class="persona-header">
+        <img class="persona-img" src="${avatarUrl}" alt="User avatar">
+        <h2 class="persona-name">${data.name || 'Reddit User'}</h2>
+        ${data.quote ? `<div class="persona-quote">"${data.quote}"</div>` : ''}
+      </div>
+      
+      <div class="persona-info">
+        <div class="info-item">
+          <span class="info-label">Age</span>
+          <span class="info-value">${data.age || 'Unknown'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Occupation</span>
+          <span class="info-value">${data.occupation || 'Unknown'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="info-value">${data.status || 'Unknown'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Location</span>
+          <span class="info-value">${data.location || 'Unknown'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Tier</span>
+          <span class="info-value">${data.tier || 'Unknown'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Archetype</span>
+          <span class="info-value">${data.archetype || 'Unknown'}</span>
+        </div>
+      </div>
+      
+      ${data.traits.length > 0 ? `
+      <div class="section">
+        <div class="section-title">PERSONALITY TRAITS</div>
+        <div class="traits-container">
+          ${data.traits.map(trait => `<div class="trait">${trait}</div>`).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      ${data.motivations.length > 0 ? `
+      <div class="section">
+        <div class="section-title">MOTIVATIONS</div>
+        ${data.motivations.map(m => `
+          <div style="text-align: center; margin-bottom: 5px;">${m.label}</div>
+          <div class="bar"><div class="fill" style="width: ${m.value * 10}%"></div></div>
+        `).join("")}
+      </div>
+      ` : ''}
+
+      ${data.habits.length > 0 ? `
+      <div class="section">
+        <div class="section-title">BEHAVIOUR & HABITS</div>
+        <ul>${data.habits.map(item => `<li>${item}</li>`).join("")}</ul>
+      </div>
+      ` : ''}
+
+      ${data.frustrations.length > 0 ? `
+      <div class="section">
+        <div class="section-title">FRUSTRATIONS</div>
+        <ul>${data.frustrations.map(item => `<li>${item}</li>`).join("")}</ul>
+      </div>
+      ` : ''}
+
+      ${data.goals.length > 0 ? `
+      <div class="section">
+        <div class="section-title">GOALS & NEEDS</div>
+        <ul>${data.goals.map(item => `<li>${item}</li>`).join("")}</ul>
+      </div>
+      ` : ''}
+    </div>`;
+  }
+
+  // Allow Enter key to trigger analysis
+  document.getElementById('usernameInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      analyzeUser();
+    }
+  });
+</script>
+
+</body>
+</html>
