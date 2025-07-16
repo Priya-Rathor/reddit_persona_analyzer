@@ -1,8 +1,8 @@
 
-#                                             🎭 Reddit Persona Generator
+#🎭 Reddit Persona Generator
+
 
 <div align="center">
-
 <img src="https://img.shields.io/badge/🚀_Status-Active-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Status">
 <img src="https://img.shields.io/badge/Python-3.7+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
 <img src="https://img.shields.io/badge/Reddit-API-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit API">
