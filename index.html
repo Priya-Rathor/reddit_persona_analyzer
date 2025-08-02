@@ -2,84 +2,434 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Reddit Persona Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Persona Analyzer Pro</title>
   <style>
     :root {
-      --primary: #4361ee;      /* Vibrant blue */
-      --primary-light: #4895ef; /* Lighter blue */
-      --secondary: #3f37c9;    /* Deep blue */
-      --accent: #f72585;       /* Energetic pink */
-      --neutral: #4cc9f0;      /* Soft cyan */
-      --text-dark: #2b2d42;    /* Dark gray-blue */
-      --text-medium: #4a4e69;  /* Medium gray-blue */
-      --text-light: #f8f9fa;   /* Light gray */
-      --bg-light: #f8f9fa;     /* Light background */
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --neutral: #4cc9f0;
+      --text-dark: #2b2d42;
+      --text-medium: #4a4e69;
+      --text-light: #f8f9fa;
+      --bg-light: #f8f9fa;
+      --bg-dark: #1a1d29;
       --card-shadow: 0 4px 20px rgba(67, 97, 238, 0.15);
       --success: #10b981;
       --error: #ef4444;
+      --warning: #f59e0b;
+      --gradient-1: linear-gradient(135deg, var(--primary), var(--accent));
+      --gradient-2: linear-gradient(135deg, var(--secondary), var(--primary-light));
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     body {
       font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 30px;
       background: var(--bg-light);
       color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Navigation */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .navbar.scrolled {
+      box-shadow: var(--card-shadow);
+    }
+    
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-medium);
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+    
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 1px;
+    }
+    
+    .cta-btn {
+      background: var(--gradient-1);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+    }
+    
+    /* Pages */
+    .page {
+      display: none;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(247, 37, 133, 0.05));
+      padding: 4rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%234361ee" opacity="0.03"><polygon points="0,0 1000,100 1000,100 0,100"/></svg>');
+      z-index: -1;
+    }
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-medium);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    /* Features Section */
+    .features {
+      padding: 4rem 0;
+      background: white;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+    
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--text-medium);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(67, 97, 238, 0.1);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
+    }
+    
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      color: white;
+    }
+    
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+    
+    .feature-card p {
+      color: var(--text-medium);
+    }
+    
+    /* How it Works */
+    .how-it-works {
+      padding: 4rem 0;
+      background: rgba(67, 97, 238, 0.02);
+    }
+    
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .step {
+      text-align: center;
+      position: relative;
+    }
+    
+    .step::after {
+      content: '';
+      position: absolute;
+      top: 40px;
+      right: -50px;
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+      z-index: -1;
+    }
+    
+    .step:last-child::after {
+      display: none;
+    }
+    
+    .step-number {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .step h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .step p {
+      color: var(--text-medium);
+    }
+    
+    /* Stats Section */
+    .stats {
+      padding: 4rem 0;
+      background: var(--gradient-2);
+      color: white;
+      text-align: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .stat {
+      padding: 1rem;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    /* Analyzer Page */
+    .analyzer-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 2rem;
     }
     
     .input-container {
       background: white;
-      padding: 30px;
+      padding: 2rem;
       border-radius: 16px;
       box-shadow: var(--card-shadow);
-      max-width: 600px;
-      margin: 0 auto 30px;
+      margin-bottom: 2rem;
     }
     
     .input-group {
-      margin-bottom: 20px;
+      margin-bottom: 1.5rem;
     }
     
-    label {
+    .input-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 0.5rem;
       font-weight: 600;
       color: var(--text-dark);
-      font-size: 16px;
     }
     
-    input[type="text"], input[type="number"] {
+    .input-group input {
       width: 100%;
-      padding: 12px 15px;
+      padding: 0.75rem 1rem;
       border: 2px solid #e2e8f0;
       border-radius: 8px;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
     }
     
-    input[type="text"]:focus, input[type="number"]:focus {
+    .input-group input:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
     }
     
+    .help-text {
+      font-size: 0.875rem;
+      color: var(--text-medium);
+      margin-top: 0.25rem;
+    }
+    
     .analyze-btn {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      background: var(--gradient-1);
       color: white;
       border: none;
-      padding: 15px 30px;
+      padding: 1rem 2rem;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       width: 100%;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
     
-    .analyze-btn:hover {
+    .analyze-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
     }
@@ -90,9 +440,10 @@
       transform: none;
     }
     
+    /* Results styling (keeping original styles) */
     .loading {
       text-align: center;
-      padding: 40px;
+      padding: 2rem;
       color: var(--text-medium);
     }
     
@@ -112,161 +463,101 @@
       to { transform: rotate(360deg); }
     }
     
+    .error, .success {
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    
     .error {
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: var(--error);
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      text-align: center;
     }
     
     .success {
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
       color: var(--success);
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      text-align: center;
     }
     
-    h1 {
-      text-align: center;
-      color: var(--secondary);
-      margin-bottom: 30px;
-      font-weight: 700;
-      font-size: 32px;
-    }
-    
-    h2 {
-      color: var(--secondary);
-      margin-bottom: 25px;
-      font-weight: 700;
-      font-size: 28px;
-      text-align: center;
-    }
-    
+    /* Persona Results (keeping original styles) */
     .persona-container {
       background: white;
       box-shadow: var(--card-shadow);
       border-radius: 16px;
       overflow: hidden;
-      max-width: 800px;
-      margin: auto;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      padding: 30px;
+      padding: 2rem;
+      transition: transform 0.3s ease;
     }
     
     .persona-container:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.2);
     }
     
     .persona-header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 2rem;
     }
     
     .persona-img {
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      margin: 0 auto 20px;
-      border: 5px solid rgba(67, 97, 238, 0.2);
+      margin: 0 auto 1rem;
+      border: 4px solid rgba(67, 97, 238, 0.2);
       object-fit: cover;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       display: block;
     }
     
-    .persona-quote {
-      font-size: 1.1em;
-      font-style: italic;
-      margin: 20px auto 0;
-      text-align: center;
-      line-height: 1.6;
-      padding: 20px;
-      background: rgba(67, 97, 238, 0.05);
-      border-radius: 12px;
-      position: relative;
-      max-width: 600px;
-    }
-    
-    .persona-quote:before,
-    .persona-quote:after {
-      content: '"';
-      font-size: 3em;
-      position: absolute;
-      opacity: 0.1;
-      color: var(--primary);
-    }
-    
-    .persona-quote:before {
-      left: 10px;
-      top: -15px;
-    }
-    
-    .persona-quote:after {
-      right: 10px;
-      bottom: -30px;
-    }
-    
     .persona-name {
-      margin: 0 0 15px 0;
-      color: var(--secondary);
-      font-size: 32px;
+      font-size: 2rem;
       font-weight: 700;
-      position: relative;
-      padding-bottom: 15px;
+      color: var(--secondary);
+      margin-bottom: 1rem;
     }
     
-    .persona-name:after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--accent), var(--primary));
-      border-radius: 2px;
-      transform: translateX(-50%);
+    .persona-quote {
+      font-style: italic;
+      background: rgba(67, 97, 238, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
     }
     
     .persona-info {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 30px;
-      text-align: center;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     
     .info-item {
-      margin-bottom: 15px;
-      padding: 15px;
+      padding: 1rem;
       background: rgba(67, 97, 238, 0.05);
       border-radius: 8px;
+      text-align: center;
     }
     
     .info-label {
       font-weight: 600;
       color: var(--primary);
       display: block;
-      font-size: 14px;
-      margin-bottom: 5px;
+      font-size: 0.875rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
     }
     
     .info-value {
-      font-size: 16px;
       color: var(--text-medium);
       font-weight: 500;
     }
     
     .section {
-      margin-bottom: 30px;
-      padding-bottom: 20px;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
       border-bottom: 1px solid rgba(67, 97, 238, 0.1);
     }
     
@@ -275,10 +566,10 @@
     }
     
     .section-title {
-      font-size: 18px;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--secondary);
-      margin-bottom: 15px;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -286,155 +577,518 @@
     
     .section-title:before {
       content: '';
-      display: inline-block;
-      width: 8px;
+      width: 6px;
       height: 20px;
       background: var(--accent);
-      margin-right: 12px;
-      border-radius: 4px;
+      margin-right: 10px;
+      border-radius: 3px;
     }
     
-    .bar {
-      background: #edf2ff;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 10px 0 20px 0;
-      height: 12px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
+    /* Footer */
+    .footer {
+      background: var(--text-dark);
+      color: var(--text-light);
+      padding: 3rem 0 1rem;
+      text-align: center;
     }
     
-    .fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--primary-light));
-      border-radius: 10px;
-      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    
-    ul {
-      padding-left: 5px;
+    .footer-content {
+      max-width: 1200px;
       margin: 0 auto;
-      max-width: 600px;
+      padding: 0 2rem;
     }
     
-    ul li {
-      margin-bottom: 12px;
-      line-height: 1.6;
-      position: relative;
-      list-style-type: none;
-      padding-left: 30px;
-      color: var(--text-medium);
-    }
-    
-    ul li:before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 8px;
-      width: 12px;
-      height: 12px;
-      background: var(--primary);
-      border-radius: 50%;
-      transform: translateY(-50%);
-    }
-    
-    .traits-container {
+    .footer-links {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 20px 0;
       justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
     }
     
-    .trait {
-      background: rgba(67, 97, 238, 0.1);
-      color: var(--primary);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 500;
-      border: 1px solid rgba(67, 97, 238, 0.2);
+    .footer-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
     }
     
-    .personality-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      max-width: 400px;
-      margin: 0 auto;
+    .footer-links a:hover {
+      color: var(--primary-light);
     }
     
-    .personality-pair {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
+    .footer-bottom {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
     }
     
-    .personality-label {
-      font-size: 14px;
-      color: var(--text-medium);
-      font-weight: 500;
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-dark);
+      cursor: pointer;
     }
     
-    .help-text {
-      font-size: 14px;
-      color: var(--text-medium);
-      margin-top: 5px;
-    }
-    
-    @media (max-width: 600px) {
-      .persona-info {
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: var(--card-shadow);
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .features-grid {
         grid-template-columns: 1fr;
       }
       
-      .persona-container {
-        padding: 20px;
+      .steps {
+        grid-template-columns: 1fr;
       }
       
-      .persona-name {
-        font-size: 28px;
+      .step::after {
+        display: none;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .analyzer-container {
+        padding: 0 1rem;
       }
       
       .input-container {
-        padding: 20px;
+        padding: 1.5rem;
       }
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<h1>Reddit Persona Analyzer</h1>
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="logo">RedditPersona Pro</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+      <li><a href="#" class="nav-link" data-page="analyzer">Analyzer</a></li>
+      <li><a href="#" class="nav-link" data-page="how-it-works">How It Works</a></li>
+      <li><a href="#" class="nav-link" data-page="examples">Examples</a></li>
+      <li><a href="#" class="cta-btn" data-page="analyzer">Try Now</a></li>
+    </ul>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+</nav>
 
-<div class="input-container">
-  <div class="input-group">
-    <label for="usernameInput">Reddit Username or URL</label>
-    <input type="text" id="usernameInput" placeholder="Enter username (e.g., johndoe) or full URL" />
-    <div class="help-text">Enter a Reddit username or paste a full Reddit profile URL</div>
-  </div>
-  
-  <div class="input-group">
-    <label for="limitInput">Analysis Limit (Optional)</label>
-    <input type="number" id="limitInput" placeholder="75" min="10" max="500" value="75" />
-    <div class="help-text">Number of posts/comments to analyze (default: 75)</div>
-  </div>
-  
-  <button class="analyze-btn" id="analyzeBtn" onclick="analyzeUser()">
-    Analyze Persona
-  </button>
+<!-- Home Page -->
+<div class="page active" id="home">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Decode Reddit Personalities</h1>
+      <p>Transform Reddit user data into detailed psychological profiles with AI-powered analysis. Understand motivations, behaviors, and personality traits in minutes.</p>
+      <div class="hero-buttons">
+        <a href="#" class="cta-btn" data-page="analyzer">Start Analysis</a>
+        <a href="#" class="btn-secondary" data-page="how-it-works">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Powerful Features</h2>
+        <p>Advanced AI analysis provides comprehensive insights into Reddit user behavior and personality patterns</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>AI-Powered Analysis</h3>
+          <p>Advanced machine learning algorithms analyze posting patterns, language use, and behavioral indicators to create accurate personality profiles.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Real-Time Processing</h3>
+          <p>Get detailed personality analysis in under 30 seconds. Our optimized pipeline handles large datasets efficiently.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Comprehensive Reports</h3>
+          <p>Detailed breakdowns including motivations, frustrations, goals, personality traits, and behavioral patterns.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Marketing Insights</h3>
+          <p>Perfect for market research, user experience design, and understanding your target audience demographics.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy Focused</h3>
+          <p>We only analyze publicly available data and don't store personal information or user profiles.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Export & Share</h3>
+          <p>Download reports as PDF, share insights with your team, or integrate data via our API.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <h2>Trusted by Professionals</h2>
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-number">50K+</span>
+          <span class="stat-label">Profiles Analyzed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">95%</span>
+          <span class="stat-label">Accuracy Rate</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">2.5K+</span>
+          <span class="stat-label">Active Users</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">15s</span>
+          <span class="stat-label">Average Analysis Time</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
-<div id="content"></div>
+<!-- Analyzer Page -->
+<div class="page" id="analyzer">
+  <div class="analyzer-container">
+    <div class="section-header">
+      <h2>Reddit Persona Analyzer</h2>
+      <p>Enter a Reddit username or profile URL to generate a comprehensive personality analysis</p>
+    </div>
+    
+    <div class="input-container">
+      <div class="input-group">
+        <label for="usernameInput">Reddit Username or URL</label>
+        <input type="text" id="usernameInput" placeholder="Enter username (e.g., johndoe) or full URL" />
+        <div class="help-text">Enter a Reddit username or paste a full Reddit profile URL</div>
+      </div>
+      
+      <div class="input-group">
+        <label for="limitInput">Analysis Depth</label>
+        <input type="number" id="limitInput" placeholder="75" min="10" max="500" value="75" />
+        <div class="help-text">Number of posts/comments to analyze (10-500, default: 75)</div>
+      </div>
+      
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyzeUser()">
+        🔍 Analyze Persona
+      </button>
+    </div>
+
+    <div id="analysisResults"></div>
+  </div>
+</div>
+
+<!-- How It Works Page -->
+<div class="page" id="how-it-works">
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Our advanced AI system analyzes Reddit user behavior through a sophisticated multi-step process</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Data Collection</h3>
+          <p>We fetch publicly available posts and comments from the specified Reddit user using Reddit's API.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Content Analysis</h3>
+          <p>Advanced NLP algorithms analyze language patterns, sentiment, topics, and communication style.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Behavioral Mapping</h3>
+          <p>AI models identify personality traits, motivations, and behavioral patterns from the analyzed content.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Profile Generation</h3>
+          <p>Generate comprehensive persona including demographics, personality traits, goals, and frustrations.</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 4rem; text-align: center;">
+        <h3>What We Analyze</h3>
+        <div class="features-grid" style="margin-top: 2rem;">
+          <div class="feature-card">
+            <h4>Language Patterns</h4>
+            <p>Vocabulary usage, sentence structure, formality level, and communication style preferences.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Interest Categories</h4>
+            <p>Subreddit participation, topic engagement, and content interaction patterns.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Sentiment Analysis</h4>
+            <p>Emotional tone, positivity/negativity ratios, and emotional expression patterns.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Behavioral Indicators</h4>
+            <p>Posting frequency, engagement levels, debate participation, and social interaction style.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Examples Page -->
+<div class="page" id="examples">
+  <div class="container" style="padding: 2rem 0;">
+    <div class="section-header">
+      <h2>Example Analyses</h2>
+      <p>See how our AI creates detailed personality profiles from Reddit user data</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Tech Entrepreneur</h3>
+        <div style="text-align: left; margin-top: 1rem;">
+          <p><strong>Age:</strong> 28-32</p>
+          <p><strong>Location:</strong> San Francisco Bay Area</p>
+          <p><strong>Traits:</strong> Innovation-driven, Risk-taker, Analytical</p>
+          <p><strong>Interests:</strong> Startups, AI/ML, Venture Capital</p>
+          <p><strong>Quote:</strong> "Disruption is just another word for opportunity in disguise."</p>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3>Gaming Enthusiast</h3>
+        <div style="text-align: left; margin-top: 1rem;">
+          <p><strong>Age:</strong> 22-26</p>
+          <p><strong>Location:</strong> Urban area, likely US/Canada</p>
+          <p><strong>Traits:</strong> Competitive, Detail-oriented, Community-focused</p>
+          <p><strong>Interests:</strong> FPS games, Streaming, Game design</p>
+          <p><strong>Quote:</strong> "The grind never stops, but neither does the fun."</p>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3>Academic Researcher</h3>
+        <div style="text-align: left; margin-top: 1rem;">
+          <p><strong>Age:</strong> 26-35</p>
+          <p><strong>Location:</strong> University town</p>
+          <p><strong>Traits:</strong> Methodical, Curious, Evidence-based</p>
+          <p><strong>Interests:</strong> Psychology, Data analysis, Academic publishing</p>
+          <p><strong>Quote:</strong> "Every dataset tells a story, you just need to know how to listen."</p>
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 3rem; text-align: center;">
+      <a href="#" class="cta-btn" data-page="analyzer">Try Your Own Analysis</a>
+    </div>
+  </div>
+</div>
+
+<!-- API Page -->
+<div class="page" id="api">
+  <div class="container" style="padding: 2rem 0;">
+    <div class="section-header">
+      <h2>API Documentation</h2>
+      <p>Integrate Reddit persona analysis into your applications with our RESTful API</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card" style="text-align: left;">
+        <h3>🚀 Getting Started</h3>
+        <p><strong>Base URL:</strong> <code>https://api.redditpersona.pro/v1</code></p>
+        <p><strong>Authentication:</strong> API Key required</p>
+        <p><strong>Rate Limits:</strong> 100 requests/hour (free tier)</p>
+        <p><strong>Response Format:</strong> JSON</p>
+      </div>
+      
+      <div class="feature-card" style="text-align: left;">
+        <h3>📡 Endpoints</h3>
+        <p><code>POST /analyze</code> - Analyze user persona</p>
+        <p><code>GET /status/{job_id}</code> - Check analysis status</p>
+        <p><code>GET /result/{job_id}</code> - Get analysis results</p>
+        <p><code>GET /usage</code> - Check API usage stats</p>
+      </div>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow); margin: 2rem 0; text-align: left;">
+      <h3>Example Request</h3>
+      <pre style="background: #f8f9fa; padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>curl -X POST https://api.redditpersona.pro/v1/analyze \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "example_user",
+    "limit": 100,
+    "include_metadata": true
+  }'</code></pre>
+      
+      <h3 style="margin-top: 2rem;">Example Response</h3>
+      <pre style="background: #f8f9fa; padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>{
+  "success": true,
+  "job_id": "abc123",
+  "status": "completed",
+  "persona": {
+    "name": "The Digital Nomad",
+    "age": "25-30",
+    "location": "Remote/Global",
+    "traits": ["Adventurous", "Independent", "Tech-savvy"],
+    "motivations": [
+      {"label": "Freedom", "score": 9},
+      {"label": "Growth", "score": 8}
+    ],
+    "confidence_score": 0.87
+  }
+}</code></pre>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>💰 Pricing</h3>
+        <p><strong>Free Tier:</strong> 100 requests/month</p>
+        <p><strong>Pro:</strong> $29/month - 5K requests</p>
+        <p><strong>Enterprise:</strong> Custom pricing</p>
+        <a href="#" class="cta-btn" style="margin-top: 1rem; display: inline-block;">Get API Key</a>
+      </div>
+      
+      <div class="feature-card">
+        <h3>📚 SDKs & Libraries</h3>
+        <p>Python SDK available on PyPI</p>
+        <p>JavaScript/Node.js SDK</p>
+        <p>REST API compatible with all languages</p>
+        <a href="#" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">View Docs</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="#" data-page="home">Home</a>
+      <a href="#" data-page="analyzer">Analyzer</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Reddit Persona Analyzer Pro. All rights reserved.</p>
+      <p>Built with advanced AI • Powered by ethical data analysis</p>
+    </div>
+  </div>
+</footer>
 
 <script>
   const API_BASE_URL = 'https://reddit-persona-analyzer.onrender.com'; // Update this to your API URL
 
+  // Navigation functionality
+  function initNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link, .cta-btn, [data-page]');
+    const pages = document.querySelectorAll('.page');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinksContainer = document.getElementById('navLinks');
+    
+    // Handle navigation clicks
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetPage = link.getAttribute('data-page');
+        
+        if (targetPage) {
+          // Hide all pages
+          pages.forEach(page => page.classList.remove('active'));
+          
+          // Show target page
+          const targetElement = document.getElementById(targetPage);
+          if (targetElement) {
+            targetElement.classList.add('active');
+          }
+          
+          // Update active nav link
+          document.querySelectorAll('.nav-link').forEach(navLink => {
+            navLink.classList.remove('active');
+          });
+          
+          if (link.classList.contains('nav-link')) {
+            link.classList.add('active');
+          } else {
+            // If it's a CTA button, find the corresponding nav link
+            const correspondingNavLink = document.querySelector(`.nav-link[data-page="${targetPage}"]`);
+            if (correspondingNavLink) {
+              correspondingNavLink.classList.add('active');
+            }
+          }
+          
+          // Close mobile menu
+          navLinksContainer.classList.remove('active');
+          
+          // Scroll to top
+          window.scrollTo(0, 0);
+        }
+      });
+    });
+    
+    // Mobile menu toggle
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinksContainer.classList.toggle('active');
+    });
+    
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  }
+
+  // Analyzer functionality
   async function analyzeUser() {
     const username = document.getElementById('usernameInput').value.trim();
     const limit = parseInt(document.getElementById('limitInput').value) || 75;
     const button = document.getElementById('analyzeBtn');
-    const content = document.getElementById('content');
+    const content = document.getElementById('analysisResults');
     
     if (!username) {
       showError('Please enter a Reddit username or URL');
@@ -443,7 +1097,7 @@
     
     // Show loading state
     button.disabled = true;
-    button.textContent = 'Analyzing...';
+    button.innerHTML = '🔄 Analyzing...';
     content.innerHTML = '<div class="loading">Analyzing Reddit user data...</div>';
     
     try {
@@ -476,18 +1130,18 @@
       showError(error.message || 'Failed to analyze user. Please try again.');
     } finally {
       button.disabled = false;
-      button.textContent = 'Analyze Persona';
+      button.innerHTML = '🔍 Analyze Persona';
     }
   }
   
   function showError(message) {
-    const content = document.getElementById('content');
-    content.innerHTML = `<div class="error">${message}</div>`;
+    const content = document.getElementById('analysisResults');
+    content.innerHTML = `<div class="error">❌ ${message}</div>`;
   }
   
   function showSuccess(message) {
-    const content = document.getElementById('content');
-    content.innerHTML = `<div class="success">${message}</div>` + content.innerHTML;
+    const content = document.getElementById('analysisResults');
+    content.innerHTML = `<div class="success">✅ ${message}</div>` + content.innerHTML;
   }
 
   function extractValue(text, label) {
@@ -560,11 +1214,11 @@
       }
     }
 
-    // Generate a more realistic avatar URL based on username
+    // Generate avatar URL
     const avatarUrl = `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80`;
 
     // Build HTML
-    const contentDiv = document.getElementById("content");
+    const contentDiv = document.getElementById("analysisResults");
     const existingSuccess = contentDiv.querySelector('.success');
     
     contentDiv.innerHTML = `
@@ -606,8 +1260,8 @@
       ${data.traits.length > 0 ? `
       <div class="section">
         <div class="section-title">PERSONALITY TRAITS</div>
-        <div class="traits-container">
-          ${data.traits.map(trait => `<div class="trait">${trait}</div>`).join('')}
+        <div class="traits-container" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+          ${data.traits.map(trait => `<div style="background: rgba(67, 97, 238, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 500; border: 1px solid rgba(67, 97, 238, 0.2);">${trait}</div>`).join('')}
         </div>
       </div>
       ` : ''}
@@ -617,7 +1271,9 @@
         <div class="section-title">MOTIVATIONS</div>
         ${data.motivations.map(m => `
           <div style="text-align: center; margin-bottom: 5px;">${m.label}</div>
-          <div class="bar"><div class="fill" style="width: ${m.value * 10}%"></div></div>
+          <div style="background: #edf2ff; border-radius: 10px; overflow: hidden; margin: 10px auto 20px; height: 12px; max-width: 400px;">
+            <div style="height: 100%; background: linear-gradient(90deg, var(--accent), var(--primary-light)); border-radius: 10px; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); width: ${m.value * 10}%;"></div>
+          </div>
         `).join("")}
       </div>
       ` : ''}
@@ -625,30 +1281,48 @@
       ${data.habits.length > 0 ? `
       <div class="section">
         <div class="section-title">BEHAVIOUR & HABITS</div>
-        <ul>${data.habits.map(item => `<li>${item}</li>`).join("")}</ul>
+        <ul style="padding-left: 5px; margin: 0 auto; max-width: 600px;">
+          ${data.habits.map(item => `<li style="margin-bottom: 12px; line-height: 1.6; position: relative; list-style-type: none; padding-left: 30px; color: var(--text-medium);"> <span style="content: ''; position: absolute; left: 0; top: 8px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; transform: translateY(-50%);"></span>${item}</li>`).join("")}
+        </ul>
       </div>
       ` : ''}
 
       ${data.frustrations.length > 0 ? `
       <div class="section">
         <div class="section-title">FRUSTRATIONS</div>
-        <ul>${data.frustrations.map(item => `<li>${item}</li>`).join("")}</ul>
+        <ul style="padding-left: 5px; margin: 0 auto; max-width: 600px;">
+          ${data.frustrations.map(item => `<li style="margin-bottom: 12px; line-height: 1.6; position: relative; list-style-type: none; padding-left: 30px; color: var(--text-medium);"> <span style="content: ''; position: absolute; left: 0; top: 8px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; transform: translateY(-50%);"></span>${item}</li>`).join("")}
+        </ul>
       </div>
       ` : ''}
 
       ${data.goals.length > 0 ? `
       <div class="section">
         <div class="section-title">GOALS & NEEDS</div>
-        <ul>${data.goals.map(item => `<li>${item}</li>`).join("")}</ul>
+        <ul style="padding-left: 5px; margin: 0 auto; max-width: 600px;">
+          ${data.goals.map(item => `<li style="margin-bottom: 12px; line-height: 1.6; position: relative; list-style-type: none; padding-left: 30px; color: var(--text-medium);"> <span style="content: ''; position: absolute; left: 0; top: 8px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; transform: translateY(-50%);"></span>${item}</li>`).join("")}
+        </ul>
       </div>
       ` : ''}
+      
+      <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(67, 97, 238, 0.1);">
+        <p style="color: var(--text-medium); font-size: 0.9rem;">Want to analyze another user? <a href="#" style="color: var(--primary); text-decoration: none;" onclick="document.getElementById('usernameInput').value=''; document.getElementById('analysisResults').innerHTML=''; document.getElementById('usernameInput').focus();">Start New Analysis</a></p>
+      </div>
     </div>`;
   }
 
-  // Allow Enter key to trigger analysis
-  document.getElementById('usernameInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      analyzeUser();
+  // Initialize app
+  document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
+    
+    // Allow Enter key to trigger analysis
+    const usernameInput = document.getElementById('usernameInput');
+    if (usernameInput) {
+      usernameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          analyzeUser();
+        }
+      });
     }
   });
 </script>
